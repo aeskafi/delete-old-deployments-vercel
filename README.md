@@ -1,26 +1,39 @@
 # Vercel Deployment Cleanup Script
 
-This Node.js script is designed to clean up old Vercel deployments for a specified project, while keeping the last 5 deployments intact. It uses the Vercel CLI to list and remove deployments.
+This Node.js script is designed to safely clean up old Vercel deployments for a specified project, while keeping the last 5 deployments intact. It uses the Vercel API to list and remove deployments.
 
 ## Prerequisites
 
 1. **Node.js**: Make sure you have Node.js installed on your system. You can download it from [nodejs.org](https://nodejs.org/).
-2. **Vercel CLI**: Install the Vercel CLI globally:
-
-   ```bash
-   npm install -g vercel
-   ```
-
-3. **Authentication**: Ensure that you are logged in to your Vercel account using the Vercel CLI:
-
-   ```bash
-   vercel login
-   ```
+2. **Vercel API Token**:
+   - You need a Vercel Personal Access Token for authentication.
+   - Go to [Vercel Account Settings](https://vercel.com/account/tokens) to generate a token.
 
 ## Setup
 
 1. Clone or download this repository to your local machine.
-2. Save the script as `delete-old-deployments.js`.
+2. Install the required dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Set the Vercel token as an environment variable:
+
+   **Linux/macOS:**
+   ```bash
+   export VERCEL_TOKEN=your_vercel_token_here
+   ```
+
+   **Windows (Command Prompt):**
+   ```bash
+   set VERCEL_TOKEN=your_vercel_token_here
+   ```
+
+   **Windows (PowerShell):**
+   ```powershell
+   $env:VERCEL_TOKEN="your_vercel_token_here"
+   ```
 
 ## Usage
 
@@ -42,9 +55,17 @@ This Node.js script is designed to clean up old Vercel deployments for a specifi
 ## How It Works
 
 1. The script accepts the **project name** as a command-line argument.
-2. It retrieves a list of deployments for the specified project using the Vercel CLI.
-3. It excludes the last 5 deployments from deletion to ensure that recent deployments are preserved.
-4. The script then iterates through the remaining deployments and removes each one using the Vercel CLI.
+2. It retrieves a list of deployments for the specified project using the Vercel API.
+3. It filters deployments to ensure only those belonging to the specified project are considered.
+4. It keeps the last 5 deployments and marks the older ones for deletion.
+5. The script displays a list of deployments that will be deleted and prompts for manual confirmation.
+6. If confirmed, it deletes the marked deployments.
+
+## Safety Features
+
+- **Strict Project Filtering**: The script filters deployments by the specified project name to avoid unintended deletions.
+- **Manual Confirmation**: Before deletion, the script displays a list of deployments and asks for confirmation.
+- **Dry Run**: The initial run lists the deployments to be deleted without performing any deletions, allowing you to verify the results.
 
 ## Error Handling
 
@@ -54,14 +75,15 @@ This Node.js script is designed to clean up old Vercel deployments for a specifi
 
 ## Notes
 
-- **Be careful** when running this script, as it will permanently delete deployments.
-- The script assumes that you have sufficient permissions to delete deployments in the specified project.
+- **Be cautious** when using this script, as it can permanently delete deployments if used incorrectly.
+- Always verify the list of deployments before confirming deletion.
+- The script assumes you have sufficient permissions to delete deployments in the specified project.
 
 ## Dependencies
 
 - [Node.js](https://nodejs.org/)
-- [Vercel CLI](https://vercel.com/docs/cli)
-- [child_process](https://nodejs.org/api/child_process.html) (Node.js core module)
+- [node-fetch](https://www.npmjs.com/package/node-fetch)
+- [dotenv](https://www.npmjs.com/package/dotenv)
 
 ## License
 
